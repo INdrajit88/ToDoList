@@ -4,6 +4,7 @@ const ejs = require("ejs");
 
 const app = express();
 const port= 3000;
+let workItems=[];
 var items=["INdrajit","NandinI"];
 var item="";
 
@@ -21,42 +22,38 @@ var options ={
 };
 var day = today.toLocaleDateString("en-US",options)// to gate the date
     res.render("list",{
-        kindOfDay:day,
+        listTitle:day,
         newListItems:items,
     });
 });
 
+ 
+
 app.post("/",function(req,res){
+    console.log(req.body);
     var item =req.body.newItem;
-    items.push(item);
-    res.redirect("/");
+    if(req.body.list === "Work List"){
+        workItems.push(item);
+        res.redirect("/work");
+    }else{
+        items.push(item);
+        res.redirect("/");
+    }
 });
-// day="";
 
-//     switch (currentDay) {
-//         case 0:
-//             day="Sunday";
-//             break;
-//         case 1:day="Monday";
-//             break;
-//         case 2:day="Tuesday";
-//             break;
-//         case 3:day="Wednesday";
-//             break;
-//         case 4:day="Thursday";
-//             break;
-//         case 5:day="Friday";
-//             break;
-//         case 6:day="Saturday";
-//             break;
+app.get("/work",function(req,res){
 
-//         default:
-//             day="tera bura din"
-//             break;
-//     }
+    res.render("list",{ 
+        listTitle:"Work List",
+        newListItems: workItems 
+    });
+});   
 
-//    
-
+app.post("/work",function(req,res){
+    var item =req.body.newItem;
+    workItems.push(item);
+    res.redirect("/work");
+});
 
 app.listen(port,function(){
     console.log("server is running on port"+ port);
